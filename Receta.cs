@@ -9,11 +9,14 @@ namespace PruebasConsola
     {
 
         private string nombreReceta;
+        //private Dictionary<string, int> listaIngredientes = new Dictionary<string, int>();
+
         public Receta()
         {
             Console.WriteLine("se instanció un objeto del tipo RECETA");
         }
 
+        public Dictionary<string, int> ListaIngredientes { get; set; }
         public string NombreReceta
         {
             set

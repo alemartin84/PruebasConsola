@@ -48,8 +48,10 @@ namespace PruebasConsola
         public void DiccToFile(Dictionary<string, int> diccionario, String archivo)
         {
             StreamWriter writer;
-            writer = new StreamWriter(archivo);
+            writer = new StreamWriter(archivo, append: true);
 
+            writer.WriteLine("{0}", archivo.Remove(archivo.Length-4));
+            
 
             foreach (KeyValuePair<string, int> kvp in diccionario)
             {
@@ -59,13 +61,29 @@ namespace PruebasConsola
             writer.Close();
         }
 
-        public void ViewCvs(string archivo)
+        public void LineToFile(string linea, String archivo)
+        {
+            StreamWriter writer;
+            writer = new StreamWriter(archivo);
+
+
+            writer.WriteLine("{0}", linea);
+           
+
+            writer.Close();
+        }
+
+        public void ReadRecipeFromFile(string archivo)
         {
             StreamReader fileReader = new StreamReader(archivo);
 
+            string line;
+            line = fileReader.ReadLine(); //para leer el nombre de la receta, despues adaptar
+
             while (fileReader.EndOfStream == false)
             {
-                string line = fileReader.ReadLine();
+                //string 
+                    line = fileReader.ReadLine();
                 string[] Columns = line.Split(',');
                 Console.WriteLine("Ingrediente leido: {0,10}             Cantidad leida: {1,15}", Columns[0], int.Parse(Columns[1]));
             }

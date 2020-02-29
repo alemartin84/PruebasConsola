@@ -8,16 +8,18 @@ namespace PruebasConsola
 {
     class Program
     {
-        const string ARCHIVO_RECETAS = "RECETA.TXT"; //PROBANDO SI SE ACTUALIZA GITyyyW
+        //const string ARCHIVO_RECETAS = "RECETA.TXT"; //PROBANDO SI SE ACTUALIZA GITyyyW
 
         static Dictionary<string, int> CargaIngrediente()
         {
             string ingrediente;
             int cantidad;
+            
 
-            Dictionary<string, int> listaRecetas = new Dictionary<string, int>();
+            Dictionary<string, int> listaIngredientes = new Dictionary<string, int>();
 
             EntradaSalida io = new EntradaSalida();
+                       
 
             do
             {
@@ -35,7 +37,7 @@ namespace PruebasConsola
 
                 try
                 {
-                    listaRecetas.Add(ingrediente, cantidad);
+                    listaIngredientes.Add(ingrediente, cantidad);
                 }
                 catch (ArgumentException)
                 {
@@ -45,26 +47,32 @@ namespace PruebasConsola
 
             } while (ingrediente != "XXX");
 
-            return listaRecetas;
+            return listaIngredientes;
         }
         
 
         static void Main(string[] args)
         {
+            string archivoRecetas;
 
             EntradaSalida io = new EntradaSalida();
 
-            /*
+            
             Receta recet = new Receta();
-            recet.NombreReceta = "MARQUISSE";
-            Console.WriteLine(recet.NombreReceta);
-            */
 
-            Console.WriteLine("CARGADOR DE RECETAS\n\n");
-                       
-            io.DiccToFile(CargaIngrediente(), ARCHIVO_RECETAS);
-            Console.WriteLine("FIN DE CARGA DE RECETA, CHEQUEE RECETAS.TXT");
-            io.ViewCvs(ARCHIVO_RECETAS);
+            recet.NombreReceta = io.ReadString("INGRESE EL NOMBRE DE LA RECETA: ");
+            recet.ListaIngredientes = CargaIngrediente();
+
+            archivoRecetas = recet.NombreReceta + ".TXT";
+
+            //io.LineToFile(recet.NombreReceta, archivoRecetas);
+            io.DiccToFile(recet.ListaIngredientes, archivoRecetas);
+
+            Console.WriteLine("FIN DE CARGA DE RECETA, MOSTRANDO RECETAS.TXT\n\n");
+
+            Console.WriteLine("NOMBRE DE LA RECETA: {0 }\n", recet.NombreReceta);
+
+            io.ReadRecipeFromFile(archivoRecetas);
 
             
             Console.Read();
