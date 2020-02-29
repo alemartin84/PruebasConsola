@@ -8,7 +8,7 @@ namespace PruebasConsola
 {
     class Program
     {
-        const string ARCHIVO_RECETAS = "RECETA.TXT"; //PROBANDO SI SE ACTUALIZA GITyyyy
+        const string ARCHIVO_RECETAS = "RECETA.TXT"; //PROBANDO SI SE ACTUALIZA GITyyyW
         static string ReadString(string prompt) 
         { 
             string result;
