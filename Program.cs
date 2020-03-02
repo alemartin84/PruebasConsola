@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Data.SQLite;
 
 namespace PruebasConsola
 {
@@ -14,6 +15,21 @@ namespace PruebasConsola
         {
             
             string nombreReceta;
+
+            string cs = @"URI=file:C:\Users\Ale\source\repos\alemartin84\PruebasConsola\bin\Debug\ale.db";
+
+            var con = new SQLiteConnection(cs);
+            con.Open();
+
+            string stm = "SELECT * FROM ingredientes";
+
+            var cmd = new SQLiteCommand(stm, con);
+            SQLiteDataReader rdr = cmd.ExecuteReader();
+
+            while (rdr.Read())
+            {
+                Console.WriteLine($"{rdr.GetString(0)} {rdr.GetInt32(1)}");
+            }
 
 
             EntradaSalida io = new EntradaSalida();
