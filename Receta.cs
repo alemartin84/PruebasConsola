@@ -10,26 +10,81 @@ namespace PruebasConsola
     public class Receta
     {
 
-        private string nombreReceta;
-        //private Dictionary<string, int> listaIngredientes = new Dictionary<string, int>();
-
+        
         public Receta()
         {
             Console.WriteLine("se instanció un objeto del tipo RECETA");
         }
 
         public Dictionary<string, int> ListaIngredientes { get; set; }
-        public string NombreReceta
+
+        public string NombreReceta { get; set; }
+
+        public string Descripcion { get; set; }
+
+        public string Horneado { get; set; }
+
+        public void CargaDescripcion()
         {
-            set
+            EntradaSalida io = new EntradaSalida();
+            Descripcion=io.ReadString("INGRESE EL PROCEDIMIENTO O ANOTACIONES:");
+        }
+
+        public void CargaHorneado()
+        {
+            EntradaSalida io = new EntradaSalida();
+            Horneado = io.ReadString("INGRESE TEMP. Y TIEMPO DE COCCION: XXXº XX'");
+        }
+
+
+        public void MostrarIngredientes()
+        {
+            foreach (KeyValuePair<string, int> kvp in ListaIngredientes)
             {
-                nombreReceta = value;
+                Console.WriteLine("INGREDIENTE:{0}     CANTIDAD:{1}", kvp.Key, kvp.Value);
             }
 
-            get
-            {
-                return nombreReceta;
-            }
         }
+
+        public void CargarIngredientes()
+        {
+            string ingrediente;
+            int cantidad;
+
+            Dictionary<string, int> listaIng = new Dictionary<string, int>();
+            EntradaSalida io = new EntradaSalida();
+
+
+            do
+            {
+
+                ingrediente = io.ReadString("INGRESE INGREDIENTE: (XXX PARA SALIR): ").ToUpper();
+
+                if (ingrediente == "XXX")
+                {
+                    break;
+                }
+
+
+                cantidad = io.ReadInt("INGRESE LA CANTIDAD EN GR.: ", 1, 10000);
+
+
+                try
+                {
+
+                    listaIng.Add(ingrediente, cantidad);
+                }
+                catch (ArgumentException)
+                {
+                    Console.WriteLine("El ingrediente = \"{0}\" ya tiene valor!.", ingrediente);
+                }
+
+
+            } while (ingrediente != "XXX");
+
+            // return listaIngredientes;
+            ListaIngredientes = listaIng;
+        }
+
     }
 }

@@ -111,5 +111,15 @@ namespace PruebasConsola
                 openFileStream.Close();
             }
         }
+
+        public void ShowFilesinConsole(string extension)
+        {
+            DirectoryInfo dir = new DirectoryInfo(Environment.CurrentDirectory);
+            foreach (FileInfo file in dir.GetFiles(extension))
+            {
+                Console.WriteLine(file.Name.Remove(file.Name.Length - 4));
+            }
+
+        }
     }
 }

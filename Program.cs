@@ -9,49 +9,7 @@ namespace PruebasConsola
 {
     class Program
     {
-        //const string ARCHIVO_RECETAS = "RECETA.TXT"; //PROBANDO SI SE ACTUALIZA GITyyyW
-
-        static Dictionary<string, int> CargaIngrediente()
-        {
-            string ingrediente;
-            int cantidad;
-            
-
-            Dictionary<string, int> listaIngredientes = new Dictionary<string, int>();
-
-            EntradaSalida io = new EntradaSalida();
-                       
-
-            do
-            {
-
-                ingrediente = io.ReadString("INGRESE INGREDIENTE: (XXX PARA SALIR): ");
-
-                if (ingrediente == "XXX")
-                {
-                    break;
-                }
-
-
-                cantidad = io.ReadInt("INGRESE LA CANTIDAD EN GR.: ", 1, 10000);
-
-
-                try
-                {
-                    listaIngredientes.Add(ingrediente, cantidad);
-                }
-                catch (ArgumentException)
-                {
-                    Console.WriteLine("El ingrediente = \"{0}\" ya tiene valor!.", ingrediente);
-                }
-
-
-            } while (ingrediente != "XXX");
-
-            return listaIngredientes;
-        }
-        
-
+       
         static void Main(string[] args)
         {
             
@@ -61,27 +19,24 @@ namespace PruebasConsola
             EntradaSalida io = new EntradaSalida();
             Receta recet = new Receta();
 
-            DirectoryInfo dir = new DirectoryInfo(Environment.CurrentDirectory);
             
-
-            foreach (FileInfo file in dir.GetFiles("*.bin"))
-            {
-                Console.WriteLine(file.Name.Remove(file.Name.Length-4));
-            }
-
+            io.ShowFilesinConsole("*.bin");
+                 
              
 
             nombreReceta = io.ReadString("INGRESE EL NOMBRE DE LA RECETA: ");
 
-            if (File.Exists(recet.NombreReceta+".bin"))
+            if (File.Exists(nombreReceta + ".bin"))
             {
-                io.DeserializeFile(recet.NombreReceta + ".bin", ref recet);
+                io.DeserializeFile(nombreReceta + ".bin", ref recet);
             }
             else
             {
                 recet.NombreReceta = nombreReceta;
-                recet.ListaIngredientes = CargaIngrediente();
-                io.SerializeToFile(recet);
+                recet.CargarIngredientes();
+                recet.CargaDescripcion();
+                recet.CargaHorneado();
+                if (recet.ListaIngredientes.Count>0) io.SerializeToFile(recet);
             }
 
 
@@ -97,11 +52,13 @@ namespace PruebasConsola
             io.ReadRecipeFromFile(archivoRecetas);
             */
 
-            foreach (KeyValuePair<string, int> kvp in recet.ListaIngredientes)
-            {
-                Console.WriteLine("INGREDIENTE:{0}     CANTIDAD:{1}", kvp.Key, kvp.Value);
-            }
-
+            //mostrar ingredientes del objeto de la clase receta
+            Console.WriteLine("\n\n LEYENDO DE ARCHIVO... \n\n");
+            Console.WriteLine("RECETA: " + recet.NombreReceta);
+            recet.MostrarIngredientes();
+            Console.WriteLine("DESCRIPCION: " + recet.Descripcion);
+            Console.WriteLine("HORNEADO: " + recet.Horneado);
+            
 
             Console.Read();
         }
