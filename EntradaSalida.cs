@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace PruebasConsola
 {
@@ -89,6 +90,26 @@ namespace PruebasConsola
             }
             fileReader.Close();
 
+        }
+
+        public void SerializeToFile(Receta recet)
+        {
+            FileStream stream = new FileStream((recet.NombreReceta+".bin"), FileMode.Create, FileAccess.Write);
+            BinaryFormatter b = new BinaryFormatter();
+            b.Serialize(stream, recet);
+            stream.Close();
+        }
+
+        public void DeserializeFile(String nombrearchivo, ref Receta recet)
+        {
+            if (File.Exists(nombrearchivo))
+            {
+                Console.WriteLine("Exite! se muestra la guardada");
+                Stream openFileStream = File.OpenRead(nombrearchivo);
+                BinaryFormatter deserializer = new BinaryFormatter();
+                recet = (Receta)deserializer.Deserialize(openFileStream);
+                openFileStream.Close();
+            }
         }
     }
 }

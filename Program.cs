@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace PruebasConsola
 {
@@ -53,19 +54,40 @@ namespace PruebasConsola
 
         static void Main(string[] args)
         {
-            string archivoRecetas;
+            
+            string nombreReceta;
+
 
             EntradaSalida io = new EntradaSalida();
-
-            
             Receta recet = new Receta();
 
-            recet.NombreReceta = io.ReadString("INGRESE EL NOMBRE DE LA RECETA: ");
-            recet.ListaIngredientes = CargaIngrediente();
+            DirectoryInfo dir = new DirectoryInfo(Environment.CurrentDirectory);
+            
 
+            foreach (FileInfo file in dir.GetFiles("*.bin"))
+            {
+                Console.WriteLine(file.Name.Remove(file.Name.Length-4));
+            }
+
+             
+
+            nombreReceta = io.ReadString("INGRESE EL NOMBRE DE LA RECETA: ");
+
+            if (File.Exists(recet.NombreReceta+".bin"))
+            {
+                io.DeserializeFile(recet.NombreReceta + ".bin", ref recet);
+            }
+            else
+            {
+                recet.NombreReceta = nombreReceta;
+                recet.ListaIngredientes = CargaIngrediente();
+                io.SerializeToFile(recet);
+            }
+
+
+            /* TODO ESTO ES PARA GUARDAR Y MOSTRAR LA FORMA DE SVC TRADICIONAL, PRUEBO LA SERIALIZACION
             archivoRecetas = recet.NombreReceta + ".TXT";
-
-            //io.LineToFile(recet.NombreReceta, archivoRecetas);
+                        
             io.DiccToFile(recet.ListaIngredientes, archivoRecetas);
 
             Console.WriteLine("FIN DE CARGA DE RECETA, MOSTRANDO RECETAS.TXT\n\n");
@@ -73,8 +95,14 @@ namespace PruebasConsola
             Console.WriteLine("NOMBRE DE LA RECETA: {0 }\n", recet.NombreReceta);
 
             io.ReadRecipeFromFile(archivoRecetas);
+            */
 
-            
+            foreach (KeyValuePair<string, int> kvp in recet.ListaIngredientes)
+            {
+                Console.WriteLine("INGREDIENTE:{0}     CANTIDAD:{1}", kvp.Key, kvp.Value);
+            }
+
+
             Console.Read();
         }
     }
