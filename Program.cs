@@ -16,7 +16,7 @@ namespace PruebasConsola
             
             string nombreReceta;
 
-            string cs = @"URI=file:C:\Users\Ale\source\repos\alemartin84\PruebasConsola\bin\Debug\ale.db";
+            string cs = @"URI=file:C:\Users\Ale\source\repos\alemartin84\PruebasConsola\bin\Debug\ale.db"; //COMMIT
 
             var con = new SQLiteConnection(cs);
             con.Open();
