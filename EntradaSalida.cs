@@ -4,12 +4,13 @@ using System.Linq;
 using System.Text;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Data.SQLite;
 
 namespace PruebasConsola
 {
     class EntradaSalida
     {
-        public string ReadString(string prompt)
+        public static string ReadString(string prompt)
         {
             string result;
             do
@@ -22,7 +23,7 @@ namespace PruebasConsola
             return result;
         }
 
-        public int ReadInt(string prompt, int low, int high)
+        public static int ReadInt(string prompt, int low, int high)
         {
             int result;
 
@@ -46,7 +47,7 @@ namespace PruebasConsola
             return result;
         }
 
-        public void DiccToFile(Dictionary<string, int> diccionario, String archivo)
+        public static void DiccToFile(Dictionary<string, int> diccionario, String archivo)
         {
             StreamWriter writer;
             writer = new StreamWriter(archivo, append: true);
@@ -62,7 +63,7 @@ namespace PruebasConsola
             writer.Close();
         }
 
-        public void LineToFile(string linea, String archivo)
+        public static void LineToFile(string linea, String archivo)
         {
             StreamWriter writer;
             writer = new StreamWriter(archivo);
@@ -74,7 +75,7 @@ namespace PruebasConsola
             writer.Close();
         }
 
-        public void ReadRecipeFromFile(string archivo)
+        public static void ReadRecipeFromFile(string archivo)
         {
             StreamReader fileReader = new StreamReader(archivo);
 
@@ -92,7 +93,7 @@ namespace PruebasConsola
 
         }
 
-        public void SerializeToFile(Receta recet)
+        public static void SerializeToFile(Receta recet)
         {
             FileStream stream = new FileStream((recet.NombreReceta+".bin"), FileMode.Create, FileAccess.Write);
             BinaryFormatter b = new BinaryFormatter();
@@ -100,7 +101,7 @@ namespace PruebasConsola
             stream.Close();
         }
 
-        public void DeserializeFile(String nombrearchivo, ref Receta recet)
+        public static void DeserializeFile(String nombrearchivo, ref Receta recet)
         {
             if (File.Exists(nombrearchivo))
             {
@@ -112,7 +113,7 @@ namespace PruebasConsola
             }
         }
 
-        public void ShowFilesinConsole(string extension)
+        public static void ShowFilesinConsole(string extension)
         {
             DirectoryInfo dir = new DirectoryInfo(Environment.CurrentDirectory);
             foreach (FileInfo file in dir.GetFiles(extension))
@@ -120,6 +121,106 @@ namespace PruebasConsola
                 Console.WriteLine(file.Name.Remove(file.Name.Length - 4));
             }
 
+        }
+
+        public static void SerializeToSqlite(Receta recet)
+        {
+
+            string cs = @"URI=file:C:\Users\Ale\Source\Repos\alemartin84\PruebasConsola\ale.db"; //COMMIT
+
+            var con = new SQLiteConnection(cs);
+            con.Open();
+
+           
+            var cmd = new SQLiteCommand(con);
+
+                                
+            byte[] arData;
+
+            using (MemoryStream stream = new MemoryStream())
+            {
+                BinaryFormatter formatter = new BinaryFormatter();
+                formatter.Serialize(stream,recet);
+                arData = stream.ToArray();
+                stream.Close();
+            }
+
+            cmd.CommandText = "INSERT INTO Recetas(NombreReceta, Datos) VALUES(@NombreReceta, @Datos)";
+
+            cmd.Parameters.AddWithValue("@NombreReceta", recet.NombreReceta);
+            cmd.Parameters.AddWithValue("@Datos", arData);
+            cmd.ExecuteNonQuery();
+
+        }
+
+        public static void DeserealizeFromSqlite(String receta, ref Receta recet)
+        {
+            string cs = @"URI=file:C:\Users\Ale\Source\Repos\alemartin84\PruebasConsola\ale.db"; //COMMIT
+
+            var con = new SQLiteConnection(cs);
+            con.Open();
+
+            
+            string stm = "SELECT Datos FROM Recetas WHERE NombreReceta='" + receta + "'";
+
+            var cmd = new SQLiteCommand(stm, con);
+           // SQLiteDataReader rdr = cmd.ExecuteReader();
+
+            using (var reader = cmd.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+
+                    Stream stream = new MemoryStream(GetBytes(reader));
+                    BinaryFormatter deserializer = new BinaryFormatter();
+                    recet = (Receta)deserializer.Deserialize(stream);
+                    
+                    
+                }
+                
+            }
+
+                    
+
+        }
+
+        public static bool CheckIfRecordExists(String record)
+        {
+            string cs = @"URI=file:C:\Users\Ale\Source\Repos\alemartin84\PruebasConsola\ale.db"; //COMMIT
+
+            var con = new SQLiteConnection(cs);
+            con.Open();
+
+            string stm = "SELECT count(*) FROM Recetas WHERE NombreReceta='" + record + "'";
+
+            var cmd = new SQLiteCommand(stm, con);
+            
+            if (Convert.ToInt32(cmd.ExecuteScalar()) > 0)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public static byte[] GetBytes(SQLiteDataReader reader)
+        {
+            const int CHUNK_SIZE = 2 * 1024;
+            byte[] buffer = new byte[CHUNK_SIZE];
+            long bytesRead;
+            long fieldOffset = 0;
+            using (MemoryStream stream = new MemoryStream())
+            {
+                while ((bytesRead = reader.GetBytes(0, fieldOffset, buffer, 0, buffer.Length)) > 0)
+                {
+                    stream.Write(buffer, 0, (int)bytesRead);
+                    fieldOffset += bytesRead;
+                }
+                return stream.ToArray();
+                //return stream;
+            }
         }
     }
 }

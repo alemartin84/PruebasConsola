@@ -6,18 +6,25 @@ using System.Runtime.Serialization.Formatters.Binary;
 
 namespace PruebasConsola
 {
+    public interface IReceta 
+    {
+       
+    }
+
     [Serializable()]
-    public class Receta
+    public class Receta// : IReceta
     {
 
         
         public Receta()
         {
-            Console.WriteLine("se instanció un objeto del tipo RECETA");
+           //  Console.WriteLine("se instanció un objeto del tipo RECETA");
+           // CONSTRUCTOR 
         }
 
         public Dictionary<string, int> ListaIngredientes { get; set; }
 
+       
         public string NombreReceta { get; set; }
 
         public string Descripcion { get; set; }
@@ -26,14 +33,14 @@ namespace PruebasConsola
 
         public void CargaDescripcion()
         {
-            EntradaSalida io = new EntradaSalida();
-            Descripcion=io.ReadString("INGRESE EL PROCEDIMIENTO O ANOTACIONES:");
+            //EntradaSalida io = new EntradaSalida();
+            Descripcion= EntradaSalida.ReadString("INGRESE EL PROCEDIMIENTO O ANOTACIONES:");
         }
 
         public void CargaHorneado()
         {
-            EntradaSalida io = new EntradaSalida();
-            Horneado = io.ReadString("INGRESE TEMP. Y TIEMPO DE COCCION: XXXº XX'");
+            //EntradaSalida io = new EntradaSalida();
+            Horneado = EntradaSalida.ReadString("INGRESE TEMP. Y TIEMPO DE COCCION: XXXº XX'");
         }
 
 
@@ -52,13 +59,13 @@ namespace PruebasConsola
             int cantidad;
 
             Dictionary<string, int> listaIng = new Dictionary<string, int>();
-            EntradaSalida io = new EntradaSalida();
+            //EntradaSalida io = new EntradaSalida();
 
 
             do
             {
 
-                ingrediente = io.ReadString("INGRESE INGREDIENTE: (XXX PARA SALIR): ").ToUpper();
+                ingrediente = EntradaSalida.ReadString("INGRESE INGREDIENTE: (XXX PARA SALIR): ").ToUpper();
 
                 if (ingrediente == "XXX")
                 {
@@ -66,7 +73,7 @@ namespace PruebasConsola
                 }
 
 
-                cantidad = io.ReadInt("INGRESE LA CANTIDAD EN GR.: ", 1, 10000);
+                cantidad = EntradaSalida.ReadInt("INGRESE LA CANTIDAD EN GR.: ", 1, 10000);
 
 
                 try

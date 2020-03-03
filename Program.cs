@@ -16,7 +16,8 @@ namespace PruebasConsola
             
             string nombreReceta;
 
-            string cs = @"URI=file:C:\Users\Ale\source\repos\alemartin84\PruebasConsola\bin\Debug\ale.db"; //COMMIT
+            /* DB DE SQLITE BIEN
+            string cs = @"URI=file:C:\Users\Ale\Source\Repos\alemartin84\PruebasConsola\ale.db"; //COMMIT
 
             var con = new SQLiteConnection(cs);
             con.Open();
@@ -30,21 +31,22 @@ namespace PruebasConsola
             {
                 Console.WriteLine($"{rdr.GetString(0)} {rdr.GetInt32(1)}");
             }
-
-
-            EntradaSalida io = new EntradaSalida();
-            Receta recet = new Receta();
+            */
 
             
-            io.ShowFilesinConsole("*.bin");
+            
+            Receta recet = new Receta();
+
+            /* TODO ESTO ERA PARA MANEJAR ARCHIVOS, AHORA ME PASO A DB
+            EntradaSalida.ShowFilesinConsole("*.bin");
                  
              
 
-            nombreReceta = io.ReadString("INGRESE EL NOMBRE DE LA RECETA: ");
+            nombreReceta = EntradaSalida.ReadString("INGRESE EL NOMBRE DE LA RECETA: ");
 
             if (File.Exists(nombreReceta + ".bin"))
             {
-                io.DeserializeFile(nombreReceta + ".bin", ref recet);
+                EntradaSalida.DeserializeFile(nombreReceta + ".bin", ref recet);
             }
             else
             {
@@ -52,9 +54,23 @@ namespace PruebasConsola
                 recet.CargarIngredientes();
                 recet.CargaDescripcion();
                 recet.CargaHorneado();
-                if (recet.ListaIngredientes.Count>0) io.SerializeToFile(recet);
+                if (recet.ListaIngredientes.Count>0) EntradaSalida.SerializeToFile(recet);
             }
+            */
+            nombreReceta = EntradaSalida.ReadString("INGRESE EL NOMBRE DE LA RECETA: ");
 
+            if (EntradaSalida.CheckIfRecordExists(nombreReceta))
+            {
+                EntradaSalida.DeserealizeFromSqlite(nombreReceta, ref recet);
+            }
+            else
+            {
+                recet.NombreReceta = nombreReceta;
+                recet.CargarIngredientes();
+                recet.CargaDescripcion();
+                recet.CargaHorneado();
+                if (recet.ListaIngredientes.Count > 0) EntradaSalida.SerializeToSqlite(recet); 
+            }
 
             /* TODO ESTO ES PARA GUARDAR Y MOSTRAR LA FORMA DE SVC TRADICIONAL, PRUEBO LA SERIALIZACION
             archivoRecetas = recet.NombreReceta + ".TXT";
@@ -74,7 +90,9 @@ namespace PruebasConsola
             recet.MostrarIngredientes();
             Console.WriteLine("DESCRIPCION: " + recet.Descripcion);
             Console.WriteLine("HORNEADO: " + recet.Horneado);
+
             
+
 
             Console.Read();
         }
