@@ -10,7 +10,7 @@ namespace PruebasConsola
     {
        
     }
-
+    
     [Serializable()]
     public class Receta// : IReceta
     {
@@ -48,10 +48,21 @@ namespace PruebasConsola
         {
             foreach (KeyValuePair<string, int> kvp in ListaIngredientes)
             {
-                Console.WriteLine("INGREDIENTE:{0}     CANTIDAD:{1}", kvp.Key, kvp.Value);
+                Console.WriteLine("INGREDIENTE:{0,-20} CANTIDAD:{1}", kvp.Key, kvp.Value);
             }
 
         }
+
+        public void MostrarCompleta()
+        {
+            Console.WriteLine("\n\n LEYENDO DE ARCHIVO... \n\n");
+            Console.WriteLine("RECETA: " + NombreReceta);
+            MostrarIngredientes();
+            Console.WriteLine("DESCRIPCION: " + Descripcion);
+            Console.WriteLine("HORNEADO: " + Horneado);
+
+        }
+
 
         public void CargarIngredientes()
         {

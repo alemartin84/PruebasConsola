@@ -10,6 +10,7 @@ namespace PruebasConsola
 {
     class EntradaSalida
     {
+        public const string FILEDB = @"URI=file:C:\Users\Ale\Source\Repos\alemartin84\PruebasConsola\ale.db";
         public static string ReadString(string prompt)
         {
             string result;
@@ -99,6 +100,7 @@ namespace PruebasConsola
             BinaryFormatter b = new BinaryFormatter();
             b.Serialize(stream, recet);
             stream.Close();
+            
         }
 
         public static void DeserializeFile(String nombrearchivo, ref Receta recet)
@@ -126,7 +128,7 @@ namespace PruebasConsola
         public static void SerializeToSqlite(Receta recet)
         {
 
-            string cs = @"URI=file:C:\Users\Ale\Source\Repos\alemartin84\PruebasConsola\ale.db"; //COMMIT
+            string cs = FILEDB; //COMMIT
 
             var con = new SQLiteConnection(cs);
             con.Open();
@@ -150,12 +152,13 @@ namespace PruebasConsola
             cmd.Parameters.AddWithValue("@NombreReceta", recet.NombreReceta);
             cmd.Parameters.AddWithValue("@Datos", arData);
             cmd.ExecuteNonQuery();
+            con.Close();
 
         }
 
         public static void DeserealizeFromSqlite(String receta, ref Receta recet)
         {
-            string cs = @"URI=file:C:\Users\Ale\Source\Repos\alemartin84\PruebasConsola\ale.db"; //COMMIT
+            string cs = FILEDB; //COMMIT
 
             var con = new SQLiteConnection(cs);
             con.Open();
@@ -180,13 +183,13 @@ namespace PruebasConsola
                 
             }
 
-                    
+            con.Close();    
 
         }
 
         public static bool CheckIfRecordExists(String record)
         {
-            string cs = @"URI=file:C:\Users\Ale\Source\Repos\alemartin84\PruebasConsola\ale.db"; //COMMIT
+            string cs = FILEDB; 
 
             var con = new SQLiteConnection(cs);
             con.Open();
@@ -195,14 +198,17 @@ namespace PruebasConsola
 
             var cmd = new SQLiteCommand(stm, con);
             
-            if (Convert.ToInt32(cmd.ExecuteScalar()) > 0)
+            if (Convert.ToInt32(cmd.ExecuteScalar()) > 0) //SI HAY MAS DE UNO ES QUE EXISTE
             {
+                con.Close();
                 return true;
             }
             else
             {
+                con.Close();
                 return false;
             }
+
         }
 
         public static byte[] GetBytes(SQLiteDataReader reader)
